@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Health Diagnosis</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <style>
+    /* CSS Variables for easy color management */
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #ffd700;
+      --tertiary-color: #28a745; /* Green for diabetes detection */
+      --bg-start: #a1c4fd;
+      --bg-end: #c2e9fb;
+      --text-color: #222;       /* Darker text for better visibility */
+      --text-secondary: #333;   /* Slightly lighter text */
+    }
+
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, var(--bg-start), var(--bg-end));
+      background-size: 200% 200%;
+      animation: gradientBG 15s ease infinite;
+      overflow-x: hidden;
+      color: var(--text-color);
+    }
+    
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Navigation Bar */
+    .nav-container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      font-size: 18px;
+      color: black;
+      font-weight: 600;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-links a:hover {
+      color: var(--secondary-color);
+    }
+
+    .logo {
+      height: 70px; /* Adjust as needed */
+      display: block;
+      margin: 0 auto 10px; /* Centers the logo */
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 100vh;
+      padding: 120px 10%;
+      position: relative;
+    }
+    
+    .hero-content {
+      max-width: 500px;
+      z-index: 1;
+    }
+    
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Button Styles */
+    .button-container {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .button {
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    /* Primary Button */
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    /* Secondary Button */
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid black;
+      color: black;
+    }
+    
+    .btn-secondary:hover {
+      background: black;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    /* Third Button (Diabetes Detection) */
+    .btn-third {
+      background: var(--tertiary-color);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-third:hover {
+      background: #218838;
+      transform: scale(1.05);
+    }
+
+    /* Hero Image Styling */
+    .hero-image {
+      max-width: 450px; /* Adjust as needed */
+      width: 100%;      /* Make it responsive */
+      height: auto;     /* Maintain aspect ratio */
+      border-radius: 15px;
+      transition: transform 0.5s ease;
+    }
+
+    .hero-image:hover {
+      transform: scale(1.05);
+    }
+
+    /* FAQ Section Container */
+    .container {
+      width: 80%;
+      max-width: 800px;
+      margin: 3rem auto; /* Centers below the hero section */
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .wrapper {
+      background-color: #ffffff;
+      margin-bottom: 20px;
+      padding: 15px 40px;
+      border-radius: 5px;
+      box-shadow: 0 15px 25px rgba(0,0,50,0.2);
+    }
+
+    .toggle, .content {
+      font-family: "Poppins", sans-serif;
+    }
+
+    .toggle {
+      width: 100%;
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      color: #111130;
+      font-weight: 500;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 15px 0;
+    }
+
+    .content {
+      position: relative;
+      font-size: 14px;
+      text-align: justify;
+      line-height: 30px;
+      height: 0;
+      overflow: hidden;
+      transition: all 1s;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 100px 5%;
+      }
+    
+      .hero-image {
+        margin-top: 30px;
+        max-width: 80%;
+      }
+    
+      .button-container {
+        justify-content: center;
+      }
+
+      .container {
+        width: 90%;
+        margin: 2rem auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Navigation -->
+  <div class="nav-container">
+    <img src="C:/Users/dell/Desktop/medicalwebsite/Nabdh_Logo-removebg-preview.png" alt="Logo" class="logo">
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="about.html">About the project</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Detect, Analyze, Protect!</h1>
+      <p>Experience AI-powered early diagnosis for better healthcare. Get instant medical analysis and insights at your fingertips.</p>
+      <div class="button-container">
+        <a href="cancer-detection.html" class="button btn-primary">Cancer Detection</a>
+        <a href="blood-test.html" class="button btn-secondary">Blood Test Analysis</a>
+        <a href="Diabetes.html" class="button btn-third">Diabetes Detection</a>
+      </div>
+    </div>
+    <!-- Hero Image -->
+    <img src="C:/Users/dell/Desktop/medicalwebsite/Adobe Express - file.png" 
+         alt="Descriptive Alt Text" 
+         class="hero-image">
+  </section>
+
+  <!-- FAQ Section -->
+  <div class="container">
+
+    <!-- Question 1 -->
+    <div class="wrapper">
+      <button class="toggle">
+        1. How does Nabdh work?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>Nabdh provides medical analysis based on the data entered by users. Once you input your test results or complete specific questionnaires, the system analyzes the data to offer an initial health assessment and personalized recommendations.</p>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="wrapper">
+      <button class="toggle">
+        2. Does the website use AI?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>Yes, some of the analysis tools on Nabdh use AI technologies, while others rely on precise programming tools to ensure accurate medical data analysis for users.</p>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="wrapper">
+      <button class="toggle">
+        3. Is my data safe on this website?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>Absolutely. We are committed to protecting user privacy. All data is securely processed and never shared with any third parties.</p>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="wrapper">
+      <button class="toggle">
+        4. Does Nabdh provide medical diagnoses?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>No, Nabdh is not a substitute for professional medical advice. It offers preliminary assessments and guidance to help you understand your health and consult with your doctor as needed.</p>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="wrapper">
+      <button class="toggle">
+        5. What types of tests can I analyze on Nabdh?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>Currently, Nabdh supports blood test analysis, skin cancer risk assessment, and diabetes risk evaluation. More test options will be added soon.</p>
+      </div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="wrapper">
+      <button class="toggle">
+        6. Is Nabdh free to use?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>Yes, all services provided by Nabdh are currently free to promote public health awareness and support users in maintaining their well-being.</p>
+      </div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="wrapper">
+      <button class="toggle">
+        7. How can I contact the Nabdh team?
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="content">
+        <p>You can reach us through the "Contact" page, where you’ll find a quick contact form and our support email address.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Optional JavaScript to toggle FAQ -->
+  <script>
+    const toggles = document.querySelectorAll('.toggle');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const content = toggle.nextElementSibling;
+        // Toggle content height
+        if (content.style.height && content.style.height !== '0px') {
+          content.style.height = '0';
+        } else {
+          content.style.height = content.scrollHeight + 'px';
+        }
+        // Toggle icon
+        const icon = toggle.querySelector('i');
+        icon.classList.toggle('fa-plus');
+        icon.classList.toggle('fa-minus');
+      });
+    });
+  </script>
+</body>
+</html>

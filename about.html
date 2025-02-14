@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About the Project</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome (For Icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      overflow-x: hidden;
+      color: #222; /* لون أوضح للنصوص */
+    }
+
+    /* Navigation Bar */
+    .nav-container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-size: 18px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: black; /* لون أوضح للروابط */
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #007bbf;
+    }
+
+    /* Main Content */
+    .content {
+      margin-top: 100px;
+      padding: 20px;
+    }
+
+    .content h1 {
+      font-size: 2.8rem;
+      font-weight: bold;
+      color: #222; /* لون أوضح للعناوين */
+    }
+
+    .content p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: auto;
+      color: #333; /* لون غامق للنصوص الرئيسية */
+    }
+
+    /* Boxes Section */
+    .boxes-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 50px;
+    }
+
+    .box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      width: 320px;
+      height: 230px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .box i {
+      font-size: 45px;
+      color: #007bbf;
+      margin-bottom: 10px;
+    }
+
+    .box h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: #222; /* لون غامق للعناوين */
+    }
+
+    .box p {
+      font-size: 1rem;
+      color: #444; /* لون أوضح للنصوص */
+      line-height: 1.4;
+      margin: 0;
+      padding: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4; /* يمنع خروج النص من البوكس */
+      -webkit-box-orient: vertical;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .boxes-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <div class="nav-container">
+    <ul class="nav-links">
+      <li><a href="home1.html">Home</a></li>
+      <li><a href="about.html">About the Project</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- Page Content -->
+  <div class="content">
+    <h1>🚀 Empowering Healthcare with AI</h1>
+    <p>
+      In a world where technology is reshaping every industry, I believe healthcare should be no exception.  
+      This AI-powered disease analysis project is designed to bring early and accurate medical insights,  
+      bridging the gap between technology and healthcare.
+    </p>
+
+    <!-- Boxes Section -->
+    <div class="boxes-container">
+      <div class="box">
+        <i class="fas fa-laptop-medical"></i>
+        <h3>🧠 Smarter Diagnosis</h3>
+        <p>
+          Leveraging AI models to analyze symptoms, medical data, and patterns  
+          to predict potential diseases efficiently and accurately.
+        </p>
+      </div>
+
+      <div class="box">
+        <i class="fas fa-bullseye"></i>
+        <h3>🎯 Project Goals</h3>
+        <p>
+          This project aims to revolutionize healthcare by providing fast, accurate  
+          disease detection using AI-powered analysis.
+        </p>
+      </div>
+
+      <div class="box">
+        <i class="fas fa-rocket"></i>
+        <h3>🔮 Future Developments</h3>
+        <p>
+          Expanding AI capabilities, integrating real-time monitoring, and collaborating  
+          with medical experts for continuous improvements.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

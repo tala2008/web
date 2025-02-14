@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diabetes Detection</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* CSS Variables */
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #ffd700;
+      --bg-start: #a1c4fd;
+      --bg-end: #c2e9fb;
+      --text-color: #222;
+    }
+
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, var(--bg-start), var(--bg-end));
+      background-size: 200% 200%;
+      animation: gradientBG 15s ease infinite;
+      overflow-x: hidden;
+      color: var(--text-color);
+      text-align: center;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Navigation Bar */
+    .nav-container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 18px;
+      color: black;
+      font-weight: 600;
+      padding: 10px 15px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--secondary-color);
+    }
+
+    /* Form Container */
+    .container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: black;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #000;
+      font-size: 1rem;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      border-radius: 5px;
+      margin-top: 15px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b0;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    .chart-container {
+      max-width: 400px;
+      margin: 30px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <div class="nav-container">
+    <ul class="nav-links">
+      <li><a href="home1.html">Home</a></li>
+      <li><a href="about.html">About the Project</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- Diabetes Detection Form -->
+  <div class="container">
+    <h1>Diabetes Detection</h1>
+    <form>
+      <div class="input-group">
+        <label for="glucose">Glucose Level:</label>
+        <input type="number" id="glucose" placeholder="Enter Glucose Level" required>
+      </div>
+      <div class="input-group">
+        <label for="blood_pressure">Blood Pressure:</label>
+        <input type="number" id="blood_pressure" placeholder="Enter Blood Pressure" required>
+      </div>
+      <div class="input-group">
+        <label for="bmi">BMI:</label>
+        <input type="number" id="bmi" placeholder="Enter BMI" required>
+      </div>
+      <div class="input-group">
+        <label for="age">Age:</label>
+        <input type="number" id="age" placeholder="Enter your Age" required>
+      </div>
+      <button type="button" onclick="Predict()">Predict</button>
+      <div id="result"></div>
+    </form>
+  </div>
+
+  <!-- Chart Container -->
+  <div class="chart-container">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    let chartInstance = null; // To store chart instance
+
+    function Predict() {
+      const glucose = parseFloat(document.getElementById('glucose').value);
+      const bloodPressure = parseFloat(document.getElementById('blood_pressure').value);
+      const bmi = parseFloat(document.getElementById('bmi').value);
+      const age = parseFloat(document.getElementById('age').value);
+
+      if (isNaN(glucose) || isNaN(bloodPressure) || isNaN(bmi) || isNaN(age)) {
+        document.getElementById('result').innerText = "⚠️ Please enter all values.";
+        return;
+      }
+
+      // Simple prediction model
+      const prediction = glucose * 0.1 + bloodPressure * 0.2 + bmi * 0.3 + age * 0.4;
+
+      let result;
+      if (prediction >= 150) {
+          result = '⚠️ High likelihood of diabetes';
+      } else {
+          result = '✅ Low likelihood of diabetes';
+      }
+
+      document.getElementById('result').innerText = result;
+
+      // Clear previous chart before drawing a new one
+      if (chartInstance !== null) {
+        chartInstance.destroy();
+      }
+
+      // Chart.js configuration
+      const ctx = document.getElementById('chart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Diabetes Risk'],
+          datasets: [{
+            label: 'Predicted Risk Level',
+            data: [prediction],
+            backgroundColor: ['rgba(255, 99, 132, 0.5)'],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

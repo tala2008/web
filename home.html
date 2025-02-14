@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Cancer Detection</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      text-align: center;
+      transition: all 0.5s ease-in-out;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .hero {
+      height: 50vh;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .container-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    #webcam-container {
+      margin: 20px auto;
+      width: 300px;
+      height: 300px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border: 3px solid #ffcc00;
+    }
+
+    #label-container {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .footer {
+      background: rgba(52, 58, 64, 0.8);
+      color: white;
+      padding: 15px;
+      margin-top: 30px;
+
+      }
+      .nav-links {
+    display: flex;
+    justify-content: center; /* يجعل العناصر في المنتصف */
+    align-items: center; /* يضمن أن تكون على نفس الخط */
+    gap: 30px; /* يضيف مسافة بين الروابط */
+    list-style: none; /* إزالة النقاط الافتراضية للقائمة */
+    padding: 0;
+}
+
+.nav-links ul {
+    display: flex; 
+    gap: 20px;
+    list-style: none; /* إزالة النقاط */
+    padding: 0;
+    margin-top: 10px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none; /* إزالة التسطير */
+    font-size: 18px;
+    color:white;
+    font-size:small;
+}
+
+  </style>
+</head>
+<body>
+  <nav class="nav-links">
+    <ul>
+      <li><a href="home.html" class="home">detect</a></li>
+
+        <li><a href="about.html" class="about">About the project</a></li>
+        <li><a href="contact.html" class="about">contact</a></li>
+        <li><a href="home1.html" class="about">home</a></li>
+
+
+    </ul>
+</nav>
+
+
+  <section class="hero">
+    <h1 class="animate_animated animate_fadeInDown">AI Cancer Detection</h1>
+    <p class="animate_animated animate_fadeInUp">Analyze images and blood values for a more accurate diagnosis</p>
+    <button class="btn btn-warning btn-lg" onclick="init()">Start Image Analysis</button>
+  </section>
+
+  <!-- Blood Test Input Form -->
+  <div class="container-box">
+    <h3>Enter Blood Test Values</h3>
+    <form id="blood-test-form">
+      <div class="mb-3">
+        <label for="hemoglobin" class="form-label">Hemoglobin (g/dL)</label>
+        <input type="number" id="hemoglobin" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="rbc" class="form-label">RBC Count (million/µL)</label>
+        <input type="number" id="rbc" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="wbc" class="form-label">WBC Count (thousand/µL)</label>
+        <input type="number" id="wbc" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="platelets" class="form-label">Platelets (thousand/µL)</label>
+        <input type="number" id="platelets" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="iron" class="form-label">Iron Level (µg/dL)</label>
+        <input type="number" id="iron" class="form-control" required>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="analyzeBlood()">Analyze Blood Values</button>
+    </form>
+    <div id="blood-results" class="mt-3"></div>
+  </div>
+
+  <!-- Webcam and Predictions -->
+  <div class="container-box">
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+  </div>
+
+  <footer class="footer">
+    &copy; 2025 AI Cancer Detection | All Rights Reserved.
+  </footer>
+
+  <!-- TensorFlow & Teachable Machine Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
+  <script>
+    // AI Model URL
+    const URL = "https://teachablemachine.withgoogle.com/models/1IxODqml8/";
+    let model, webcam, labelContainer, maxPredictions;
+
+    // Initialize the Image Model
+    async function init() {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      webcam = new tmImage.Webcam(300, 300, true);
+      await webcam.setup();
+      await webcam.play();
+      window.requestAnimationFrame(loop);
+
+      document.getElementById("webcam-container").innerHTML = "";
+      document.getElementById("webcam-container").appendChild(webcam.canvas);
+      labelContainer = document.getElementById("label-container");
+      labelContainer.innerHTML = "";
+    }
+
+    async function loop() {
+      webcam.update();
+      await predict();
+      window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+      const prediction = await model.predict(webcam.canvas);
+      
+      // تفريغ النتائج السابقة
+      labelContainer.innerHTML = "";
+
+      // عرض جميع الفئات المتوقعة مع النسب
+      prediction.forEach(pred => {
+          let resultText = `${pred.className}: ${(pred.probability * 100).toFixed(2)}%`;
+          let resultDiv = document.createElement("div");
+          resultDiv.innerText = resultText;
+          labelContainer.appendChild(resultDiv);
+      });
+    }
+
+    // Blood Test Analysis Function
+    function analyzeBlood() {
+    let hemoglobin = parseFloat(document.getElementById("hemoglobin").value);
+    let rbc = parseFloat(document.getElementById("rbc").value);
+    let wbc = parseFloat(document.getElementById("wbc").value);
+    let platelets = parseFloat(document.getElementById("platelets").value);
+    let iron = parseFloat(document.getElementById("iron").value);
+    
+    let gender = prompt("Enter your gender (male/female):").toLowerCase();  // طلب تحديد الجنس
+    let results = [];
+
+    // تحديد القيم الطبيعية بناءً على الجنس
+    let hemoglobinMin = (gender === "male") ? 13.5 : 12.0;
+    let hemoglobinMax = (gender === "male") ? 17.5 : 15.5;
+    let rbcMin = (gender === "male") ? 4.7 : 4.2;
+    let rbcMax = (gender === "male") ? 6.1 : 5.4;
+    let ironMin = (gender === "male") ? 65 : 50;
+    let ironMax = (gender === "male") ? 175 : 170;
+
+    // تحليل القيم المدخلة
+    if (hemoglobin < hemoglobinMin || hemoglobin > hemoglobinMax) 
+        results.push(`Hemoglobin level is abnormal. Normal range: ${hemoglobinMin}-${hemoglobinMax} g/dL.`);
+    
+    if (rbc < rbcMin || rbc > rbcMax) 
+        results.push(`RBC count is abnormal. Normal range: ${rbcMin}-${rbcMax} million/µL.`);
+    
+    if (wbc < 4.0 || wbc > 11.0) 
+        results.push("WBC count is abnormal. Normal range: 4.0-11.0 thousand/µL.");
+    
+    if (platelets < 150 || platelets > 450) 
+        results.push("Platelet count is abnormal. Normal range: 150-450 thousand/µL.");
+    
+    if (iron < ironMin || iron > ironMax) 
+        results.push(`Iron level is abnormal. Normal range: ${ironMin}-${ironMax} µg/dL.`);
+    
+    // عرض النتائج
+    document.getElementById("blood-results").innerHTML = 
+        results.length > 0 ? results.join("<br>") : "✅ All values are within the normal range!";
+}
+
+  </script>
+
+</body>
+</html>

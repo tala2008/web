@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Cancer Prediction</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(120deg, #a1c4fd, #c2e9fb); min-height: 100vh; margin: 0; padding: 0; color: #222; }
+    .nav-container { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 1000; }
+    .nav-links { display: flex; justify-content: center; gap: 30px; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: 18px; color: black; font-weight: 600; padding: 10px 15px; transition: all 0.3s ease; }
+    .nav-links a:hover { color: #ffd700; }
+    .hero { height: 60vh; color: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; margin-top: 60px; }
+    .hero h1 { font-size: 3rem; margin-bottom: 20px; }
+    .hero p { font-size: 1.2rem; margin-bottom: 30px; color: #333; }
+    .container-box { margin: 40px auto; max-width: 800px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #webcam-container canvas { display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    #label-container { margin-top: 15px; font-size: 1.1rem; color: #333; text-align: center; }
+    .container-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin: 80px auto 20px;
+            max-width: 600px;
+        }
+         /* Boxes Section */
+    .boxes-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 50px;
+    }
+
+    .box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      width: 320px;
+      height: 230px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .box i {
+      font-size: 45px;
+      color: #007bbf;
+      margin-bottom: 10px;
+    }
+
+    .box h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: #222; /* لون غامق للعناوين */
+    }
+
+    .box p {
+      font-size: 1rem;
+      color: #444; /* لون أوضح للنصوص */
+      line-height: 1.4;
+      margin: 0;
+      padding: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4; /* يمنع خروج النص من البوكس */
+      -webkit-box-orient: vertical;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .boxes-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+        /* Input Styling */
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .container-box {
+                width: 90%;
+            }
+        }
+  </style>
+</head>
+<body>
+  <div class="nav-container">
+    <ul class="nav-links">
+      <li><a href="home1.html">Home</a></li>
+      <li><a href="about.html">About the project</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <section class="hero">
+    <h1 class="animate__animated animate__fadeInDown">AI Cancer Prediction</h1>
+    <p class="animate__animated animate__fadeInUp">Providing AI-assisted skin cancer prediction for preliminary assessment</p>
+    <button class="btn btn-warning btn-lg" onclick="init()">Start Prediction</button>
+  </section>
+  
+  <div class="container-box">
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+  </div>
+   <!-- Blood Test Input Form -->
+   <div class="container-box">
+    <h3>Blood Biomarker Analysis for Melanoma Risk</h3>
+
+    <p>Please enter your recent blood test results for the following biomarkers:</p>
+    <form id="blood-test-form">
+        <div class="mb-3">
+            <label for="hemoglobin">S100 Protein (S100B) μg/L.</label>
+            <input type="number" id="hemoglobin" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="rbc">Lactate Dehydrogenase (LDH)  U/L :
+
+            </label>
+            <input type="number" id="rbc" class="form-control" required>
+        </div>
+       
+        <button type="button" class="btn-primary" onclick="analyzeBlood()">Analyze biomarkers values</button>
+    </form>
+    <div id="blood-results" class="mt-3"></div>
+</div>
+
+<script>
+  function analyzeBlood() {
+      let s100 = parseFloat(document.getElementById("s100").value);
+      let ldh = parseFloat(document.getElementById("ldh").value);
+
+      let results = [];
+
+      // تحليل S100
+      if (s100 > 0.105) {
+          results.push(`⚠ S100 Protein is high (${s100} μg/L). Normal is less than 0.105 μg/L.`);
+      } else {
+          results.push(`✅ S100 Protein is within the normal range (${s100} μg/L).`);
+      }
+
+      // تحليل LDH
+      if (ldh < 140) {
+          results.push(`⚠ LDH is too low (${ldh} U/L). Normal range is 140-280 U/L.`);
+      } else if (ldh > 280) {
+          results.push(`❌ LDH is too high (${ldh} U/L). Please consult a doctor.`);
+      } else {
+          results.push(`✅ LDH is within the normal range (${ldh} U/L).`);
+      }
+
+      document.getElementById("blood-results").innerHTML = results.join("<br>");
+  }
+</script>
+
+  
+  
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script>
+    const URL = "https://teachablemachine.withgoogle.com/models/1IxODqml8/";
+    let model, webcam, labelContainer, maxPredictions;
+
+    async function init() {
+      const modelURL = URL + "model.json";
+      const metadataURL = URL + "metadata.json";
+      model = await tmImage.load(modelURL, metadataURL);
+      maxPredictions = model.getTotalClasses();
+
+      webcam = new tmImage.Webcam(300, 300, true);
+      await webcam.setup();
+      await webcam.play();
+      window.requestAnimationFrame(loop);
+
+      const webcamContainer = document.getElementById("webcam-container");
+      webcamContainer.innerHTML = "";
+      webcamContainer.appendChild(webcam.canvas);
+      labelContainer = document.getElementById("label-container");
+      labelContainer.innerHTML = "";
+    }
+
+    async function loop() { webcam.update(); await predict(); window.requestAnimationFrame(loop); }
+
+    async function predict() {
+      const prediction = await model.predict(webcam.canvas);
+      labelContainer.innerHTML = "";
+      prediction.forEach(pred => {
+        let resultDiv = document.createElement("div");
+        resultDiv.innerText = `${pred.className}: ${(pred.probability * 100).toFixed(2)}%`;
+        labelContainer.appendChild(resultDiv);
+      });
+    }
+  </script>
+  <div class="container-box">
+    <h3>Genetic Risk Assessment for Skin Cancer</h3>
+    <p>Please answer the following questions to assess your genetic risk for skin cancer:</p>
+    <form id="genetic-form">
+      <div class="mb-3">
+        <label>Do you have first-degree relatives with skin cancer?</label>
+        <select class="form-control" id="q1">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label>Have you had skin cancer before?</label>
+        <select class="form-control" id="q2">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label>Do you have confirmed genetic mutations (e.g., BRAF, NRAS, CDKN2A)?</label>
+        <select class="form-control" id="q3">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="assessRisk()">Assess Risk</button>
+    </form>
+    <div id="result" class="mt-3"></div>
+  </div>
+
+  <script>
+    function assessRisk() {
+      let answers = [
+        document.getElementById('q1').value,
+        document.getElementById('q2').value,
+        document.getElementById('q3').value
+      ];
+      let yesCount = answers.filter(ans => ans === 'yes').length;
+
+      let result = '';
+      if (yesCount >= 2) {
+        result = "⚠️ You may have genetic risk factors for skin cancer. It's advisable to consult a dermatologist.";
+      } else {
+        result = "✅ Your genetic risk for skin cancer seems low. Regular check-ups are still recommended.";
+      }
+
+      document.getElementById('result').innerHTML = result;
+    }
+  </script>
+   <!-- Page Content -->
+   <div class="content">
+   
+
+   
+    
+  <!-- Boxes Section -->
+  <div class="boxes-container">
+    <div class="box">
+      <i class="fas fa-vial"></i>
+      <h3>🧪 Blood Biomarkers</h3>
+      <p class="truncate-text">
+        Our system allows manual input of S100 and LDH levels, providing a quick melanoma risk assessment.
+      </p>
+    </div>
+
+    <div class="box">
+      <i class="fas fa-dna"></i>
+      <h3>🧬 Genetic Risk Survey</h3>
+      <p class="truncate-text">
+        A simple questionnaire checks family history and genetic mutations, giving a preliminary skin cancer risk evaluation.
+      </p>
+    </div>
+
+    <div class="box">
+      <i class="fas fa-camera"></i>
+      <h3>📷 Skin Lesion Check</h3>
+      <p class="truncate-text">
+        Captures and evaluates skin images, comparing patterns to known melanoma data for early risk detection.
+      </p>
+    </div>
+  </div>
+
+  <style>
+    .truncate-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+    <footer class="footer">&copy; 2025 AI Cancer Prediction | All Rights Reserved.</footer>
+
+</body>
+</html>
